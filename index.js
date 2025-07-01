@@ -63,12 +63,27 @@ require("dotenv").config();
 
 const app = express();
 
-// ✅ Enable CORS for your Vercel frontend
+// ✅ Fix: Allowed frontend origins
+const allowedOrigins = [
+  "https://jwtfrontend-three.vercel.app",
+  "https://jwtfrontend-c28qe9bfu-abhi1-singhs-projects.vercel.app"
+];
+
+// ✅ Proper CORS middleware setup
 app.use(cors({
-  origin: "https://jwtfrontend-three.vercel.app", // 🔁 Replace with your actual Vercel URL
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS Not Allowed for this Origin: " + origin));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
+// ✅ Preflight support
+app.options("*", cors());
 
 app.use(express.json());
 
@@ -115,6 +130,6 @@ function verifyToken(req, res, next) {
   }
 }
 
-// ✅ Server
+// ✅ Server Port
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log("Server running on", PORT));
