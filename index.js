@@ -131,13 +131,25 @@ mongoose
 app.post("/signup", async (req, res) => {
   try {
     const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ error: "Username or password missing" });
+    }
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(409).json({ error: "User already exists" });
+    }
+
     const user = new User({ username, password });
     await user.save();
     res.status(201).json({ message: "User registered" });
   } catch (err) {
+    console.error("❌ Signup Error:", err); // <-- add this line
     res.status(500).json({ error: "Signup failed" });
   }
 });
+
 
 // ✅ Login Route
 app.post("/login", async (req, res) => {
