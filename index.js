@@ -92,23 +92,30 @@ require("dotenv").config();
 
 const app = express();
 
-// ✅ CORS Configuration
+// ✅ CORS Options
+const allowedOrigins = [
+  "https://jwtfrontend-three.vercel.app",
+  "https://jwtfrontend-c28qe9bfu-abhi1-singhs-projects.vercel.app"
+];
+
 const corsOptions = {
-  origin: [
-    "https://jwtfrontend-three.vercel.app",
-    "https://jwtfrontend-c28qe9bfu-abhi1-singhs-projects.vercel.app"
-  ],
-  credentials: true,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 };
 
 app.use(cors(corsOptions));
-
-// ✅ Automatically handle OPTIONS requests using cors middleware
-app.options("*", cors(corsOptions)); // ✅ Fix: Add CORS headers in OPTIONS response
-
 app.use(express.json());
+
+// ✅ Preflight CORS OPTIONS support
+app.options("*", cors(corsOptions));
 
 // ✅ MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
@@ -119,10 +126,15 @@ mongoose.connect(process.env.MONGO_URI)
 app.post("/signup", async (req, res) => {
   try {
     const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: "Username and password required" });
+    }
+
     const user = new User({ username, password });
     await user.save();
     res.status(201).json({ message: "User registered" });
   } catch (err) {
+    console.error("Signup Error:", err);
     res.status(500).json({ error: "Signup failed" });
   }
 });
@@ -137,6 +149,7 @@ app.post("/login", async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
     res.json({ token });
   } catch (err) {
+    console.error("Login Error:", err);
     res.status(500).json({ error: "Login failed" });
   }
 });
@@ -163,4 +176,4 @@ function verifyToken(req, res, next) {
 
 // ✅ Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log("Server running on", PORT));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
