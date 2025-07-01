@@ -99,7 +99,7 @@ app.post("/signup", async (req, res) => {
   res.json({ message: "User registered" });
 });
 
-app.post("/login", async (req, res) => {
+app.post("/login",  async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username, password });
   if (!user) return res.status(401).json({ error: "Invalid credentials" });
@@ -108,9 +108,9 @@ app.post("/login", async (req, res) => {
   res.json({ token });
 });
 
-app.get("/profile", verifyToken, (req, res) => {
-  res.json({ message: "Welcome to protected profile route" });
-});
+// app.get("/profile", verifyToken, (req, res) => {
+//   res.json({ message: "Welcome to protected profile route" });
+// });
 
 // ✅ Middleware
 function verifyToken(req, res, next) {
