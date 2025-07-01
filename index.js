@@ -94,10 +94,12 @@ const app = express();
 
 // ✅ Allowed Frontend URLs (add your frontend URLs here)
 const allowedOrigins = [
-  "https://jwtfrontend-three.vercel.app",
-  "https://jwtfrontend-c28qe9bfu-abhi1-singhs-projects.vercel.app",
-  "https://jwtfrontend-prel.vercel.app",
-  "https://jwtfrontend-prel-g5nsh4xrh-abhi1-singhs-projects.vercel.app",
+//   "https://jwtfrontend-three.vercel.app",
+//   "https://jwtfrontend-c28qe9bfu-abhi1-singhs-projects.vercel.app",
+//   "https://jwtfrontend-prel.vercel.app",
+//   "https://jwtfrontend-prel-g5nsh4xrh-abhi1-singhs-projects.vercel.app",
+ "https://jwtfrontend-hli3.vercel.app",
+  "https://jwtfrontend-hli3-j9wybpvn0-abhi1-singhs-projects.vercel.app",
   "http://localhost:5173" // for local development
 ];
 
